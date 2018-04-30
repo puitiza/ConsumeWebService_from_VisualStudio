@@ -7,6 +7,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface ResultadoService {
-    @GET("{word}")
+    @GET("GetData/{word}")
     Call<Resultado> getResultado(@Path("word")String word);
 }
