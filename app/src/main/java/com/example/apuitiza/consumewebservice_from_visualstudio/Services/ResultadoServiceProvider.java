@@ -24,8 +24,8 @@ public class ResultadoServiceProvider {
     private Retrofit getRetrofit(){
         if(this.retrofit == null){
             this.retrofit= new Retrofit.Builder()
-                    //.baseUrl("http://192.168.43.176:15021/Service1.svc/GetData/")
-                    .baseUrl("http://192.168.8.11:15021/Service1.svc/GetData/")
+                    //.baseUrl("http://192.168.43.176:15021/Service1.svc/")
+                    .baseUrl("http://192.168.8.11:15021/Service1.svc/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
