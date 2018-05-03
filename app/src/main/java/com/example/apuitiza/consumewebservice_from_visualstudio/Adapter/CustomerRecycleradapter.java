@@ -45,7 +45,7 @@ public class CustomerRecycleradapter extends RecyclerView.Adapter<CustomerRecycl
         holder.layout_item_client.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext,"click "+ cliente.getCompanyName(),Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext,"click "+ cliente.getCompanyName(),Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(mContext, OrdersActivity.class);
                 intent.putExtra("id_customer",cliente.getCustomerID());
                 mContext.startActivity(intent);

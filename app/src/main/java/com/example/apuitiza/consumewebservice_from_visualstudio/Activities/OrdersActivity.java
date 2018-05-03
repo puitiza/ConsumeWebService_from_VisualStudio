@@ -5,15 +5,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.example.apuitiza.consumewebservice_from_visualstudio.Adapter.CustomerRecycleradapter;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Adapter.OrderRecycleradapter;
-import com.example.apuitiza.consumewebservice_from_visualstudio.Events.ErrorEvent;
-import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Customers;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Order;
 import com.example.apuitiza.consumewebservice_from_visualstudio.R;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Services.ResultadoService;
 
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
