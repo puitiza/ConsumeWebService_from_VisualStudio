@@ -1,6 +1,8 @@
 package com.example.apuitiza.consumewebservice_from_visualstudio.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Order;
 import com.example.apuitiza.consumewebservice_from_visualstudio.R;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.List;
 
@@ -48,10 +51,8 @@ public class OrderRecycleradapter extends RecyclerView.Adapter<OrderRecycleradap
         holder.layout_item_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext,"click "+ order_cliente.getOrderID(),Toast.LENGTH_LONG).show();
-               /* Intent intent = new Intent(mContext, OrdersActivity.class);
-                intent.putExtra("id_customer",cliente.getCustomerID());
-                mContext.startActivity(intent);*/
+               // Toast.makeText(mContext,"click "+ order_cliente.getOrderID(),Toast.LENGTH_LONG).show();
+                showInfoDialog_Order(order_cliente);
             }
         });
     }
@@ -59,6 +60,44 @@ public class OrderRecycleradapter extends RecyclerView.Adapter<OrderRecycleradap
     @Override
     public int getItemCount() {
         return lstOrders.size();
+    }
+
+    private void showInfoDialog_Order(Order order) {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+        dialog.setTitle("Informacion:");
+        dialog.setMessage("Se muestra la informacion de la Orden");
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View register_layout = inflater.inflate(R.layout.layout_show_info_order,null);
+
+        final MaterialEditText edtOrderDate = register_layout.findViewById(R.id.edtOrderDate);
+        final MaterialEditText edtShipAddress = register_layout.findViewById(R.id.edtShipAddress);
+        final MaterialEditText edtShipCity = register_layout.findViewById(R.id.edtShipCity);
+        final MaterialEditText edtShipName = register_layout.findViewById(R.id.edtShipName);
+        final MaterialEditText edtShipPostCode = register_layout.findViewById(R.id.edtShipPostCode);
+        final MaterialEditText edtShippedDate = register_layout.findViewById(R.id.edtShippedDate);
+
+        edtOrderDate.setText(order.getOrderDate());
+        edtShipAddress.setText(order.getShipAddress());
+        edtShipCity.setText(order.getShipCity());
+        edtShipName.setText(order.getShipName());
+        edtShipPostCode.setText(order.getShipPostcode());
+        edtShippedDate.setText(order.getShippedDate());
+
+        dialog.setView(register_layout);
+        dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                dialogInterface.dismiss();
+                Toast.makeText(mContext,"Info mostrada",Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     class OrderViewHolder extends RecyclerView.ViewHolder {
