@@ -1,6 +1,7 @@
 package com.example.apuitiza.consumewebservice_from_visualstudio.Services;
 
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Customers;
+import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Order;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Resultado;
 
 import java.util.List;
@@ -15,5 +16,8 @@ public interface ResultadoService {
 
     @GET("getAllCustomers")
     Call<List<Customers>> getListCustomer();
+
+    @GET("getOrdersForCustomer/{customerID}")
+    Call<List<Order>> getordersForCustomer (@Path("customerID")String customerID);
 
 }

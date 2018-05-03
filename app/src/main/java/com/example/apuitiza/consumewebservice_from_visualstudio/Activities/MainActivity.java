@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         final RecyclerView customerRecycler = findViewById(R.id.recycle);
 
         Retrofit retrofit = new Retrofit.Builder()
-                                .baseUrl("http://192.168.8.11:15021/Service1.svc/")
+                                .baseUrl("http://192.168.43.176:15021/Service1.svc/")
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build();
         ResultadoService service = retrofit.create(ResultadoService.class);
