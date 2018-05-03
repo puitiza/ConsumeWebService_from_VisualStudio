@@ -32,7 +32,6 @@ public class ResultadoServiceProvider {
         return retrofit;
     }
 
-    
 
     public void getResultado(String word){
         ResultadoService service = getRetrofit().create(ResultadoService.class);
