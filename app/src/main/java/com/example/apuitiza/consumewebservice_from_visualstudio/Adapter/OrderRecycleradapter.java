@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +15,21 @@ import android.widget.Toast;
 
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Order;
 import com.example.apuitiza.consumewebservice_from_visualstudio.R;
+import com.example.apuitiza.consumewebservice_from_visualstudio.Services.ApiUtils;
+import com.example.apuitiza.consumewebservice_from_visualstudio.Services.ResultadoService;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.List;
+
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class OrderRecycleradapter extends RecyclerView.Adapter<OrderRecycleradapter.OrderViewHolder>{
 
     private List<Order> lstOrders;
     private Context mContext;
+
+    private ResultadoService mResultadoService;
 
     public OrderRecycleradapter(List<Order> lstOrders, Context mContext) {
         this.lstOrders = lstOrders;
@@ -32,6 +40,7 @@ public class OrderRecycleradapter extends RecyclerView.Adapter<OrderRecycleradap
     @Override
     public OrderViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_orders, parent, false);
+        mResultadoService = ApiUtils.getAPIService();
         return new OrderViewHolder(view);
     }
 
@@ -62,12 +71,12 @@ public class OrderRecycleradapter extends RecyclerView.Adapter<OrderRecycleradap
         return lstOrders.size();
     }
 
-    private void showInfoDialog_Order(Order order) {
+    private void showInfoDialog_Order(final Order order) {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
         dialog.setTitle("Informacion:");
         dialog.setMessage("Se muestra la informacion de la Orden");
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View register_layout = inflater.inflate(R.layout.layout_show_info_order,null);
+        final View register_layout = inflater.inflate(R.layout.layout_show_info_order,null);
 
         final MaterialEditText edtOrderDate = register_layout.findViewById(R.id.edtOrderDate);
         final MaterialEditText edtShipAddress = register_layout.findViewById(R.id.edtShipAddress);
@@ -83,12 +92,39 @@ public class OrderRecycleradapter extends RecyclerView.Adapter<OrderRecycleradap
         edtShipPostCode.setText(order.getShipPostcode());
         edtShippedDate.setText(order.getShippedDate());
 
+
+
         dialog.setView(register_layout);
         dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 dialogInterface.dismiss();
-                Toast.makeText(mContext,"Info mostrada",Toast.LENGTH_SHORT).show();
+                //Actualizando
+                order.setShipAddress(edtShipAddress.getText().toString());
+                order.setShipCity(edtShipCity.getText().toString());
+                order.setShipName(edtShipName.getText().toString());
+                order.setShipPostcode(edtShipPostCode.getText().toString());
+               // Toast.makeText(mContext,"Info mostrada",Toast.LENGTH_SHORT).show();
+
+                retrofit2.Call<Integer> resultData = mResultadoService.updateOrderAddress(order);
+
+                //Luego de Actualizar el campo notifyDataSetChanged lo que hace es que notifica el cambio y actualiza el recyclerView
+                notifyDataSetChanged();
+                resultData.enqueue(new Callback<Integer>() {
+                    @Override
+                    public void onResponse(retrofit2.Call<Integer> call, Response<Integer> response) {
+                        Integer i = response.body();
+                        int anthi =  Integer.parseInt(i.toString());
+                        if(i == 0){
+                            Toast.makeText(mContext,"Exito",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(retrofit2.Call<Integer> call, Throwable t) {
+
+                    }
+                });
             }
         });
         dialog.setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
