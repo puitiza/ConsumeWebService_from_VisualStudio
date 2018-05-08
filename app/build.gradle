@@ -36,4 +36,5 @@ dependencies {
 
     //Esta libreria es para mostrar un dialog con mejor diseño
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+    implementation 'com.android.support:design:27.1.1'
 }
