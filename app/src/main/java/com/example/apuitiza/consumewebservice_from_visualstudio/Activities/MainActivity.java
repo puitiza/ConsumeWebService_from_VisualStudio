@@ -8,33 +8,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.apuitiza.consumewebservice_from_visualstudio.Adapter.CustomerRecycleradapter;
-import com.example.apuitiza.consumewebservice_from_visualstudio.Adapter.OrderRecycleradapter;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Customers;
-import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Order;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.WsResultado;
 import com.example.apuitiza.consumewebservice_from_visualstudio.R;
-import com.example.apuitiza.consumewebservice_from_visualstudio.RecyclerViewItemClickListener;
+import com.example.apuitiza.consumewebservice_from_visualstudio.Util.RecyclerViewItemClickListener;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Services.ApiUtils;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Services.ResultadoService;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,13 +63,14 @@ public class MainActivity extends AppCompatActivity {
 
                     recyclerAdapter = new CustomerRecycleradapter(lista_customers,MainActivity.this);
 
+                    customerRecycler.setAdapter(recyclerAdapter);
                     recyclerAdapter.setOnItemClickListener(new RecyclerViewItemClickListener() {
-                       /* @Override
-                        public void onItemClick(View view, int position) {
-                            Toast.makeText(MainActivity.this, getResources().getString(R.string.clicked_item, albumList.get(position).getAlbumName()), Toast.LENGTH_SHORT).show();
-                        }*/
+                        /* @Override
+                         public void onItemClick(View view, int position) {
+                             Toast.makeText(MainActivity.this, getResources().getString(R.string.clicked_item, albumList.get(position).getAlbumName()), Toast.LENGTH_SHORT).show();
+                         }*/
                         @Override
-                        public void onItemLongClick(View view, int position) {
+                        public void onItemLongClick(View view,final int position) {
                             String options[] = new String[] {"Editar Cliente", "Eliminar Cliente"};
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -88,20 +80,16 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int item) {
                                     switch (item){
                                         case 0 :
-                                           // showAlertForEditCustomer(lista_customers.get(info.position));
+                                            // showAlertForEditCustomer(lista_customers.get(info.position));
                                             Toast.makeText(getApplicationContext(),"Editar Cliente",Toast.LENGTH_SHORT).show();
                                         case 1 :
-                                            //showAlertForDeleteCustomer(lista_customers.get(info.position));
-                                            Toast.makeText(getApplicationContext(),"Eliminar Cliente",Toast.LENGTH_SHORT).show();
+                                            showAlertForDeleteCustomer(lista_customers.get(position));
                                     }
                                 }
                             });
                             builder.show();
                         }
                     });
-
-                    customerRecycler.setAdapter(recyclerAdapter);
-
                     rootLayout = findViewById(R.id.activity_main);
                     fab.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -110,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }else{
-                    Toast.makeText(getApplicationContext(),"La información no se ppuede mostrar",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"La información no se puede mostrar",Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -119,6 +107,53 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"No esta disponible la información, problema con la red",Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void showAlertForDeleteCustomer(final Customers customers) {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Eliminar Cliente : "+ customers.getCustomerID());
+        dialog.setMessage("¿Estas seguro que quieres eliminar el cliente : "+customers.getCompanyName()+" ?");
+
+        dialog.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, final int thisPosition) {
+                Call<WsResultado> wsResultadoData = mResultadoService.deleteCustomer(customers.getCustomerID());
+                wsResultadoData.enqueue(new Callback<WsResultado>() {
+                    @Override
+                    public void onResponse(Call<WsResultado> call, Response<WsResultado> response) {
+                        if(response.body()!= null){
+                            WsResultado result= response.body();
+                            if(result.getWasSuccessful() == -3 || result.getWasSuccessful() == -1){
+                                Snackbar.make(rootLayout,result.getException(),Snackbar.LENGTH_LONG).show();
+                            }
+                            if(result.getWasSuccessful() == 1 ){
+//--------------------------------Esto es para remover un item dentro del RecyclerView---------------------------------------
+                                lista_customers.remove(customers);
+                                recyclerAdapter.notifyDataSetChanged();
+//---------------------------------------------------------------------------------------------------------------------------
+                                Snackbar.make(rootLayout,"Se elimino correctamente",Snackbar.LENGTH_LONG).show();
+                            }
+
+                        }else{
+                            Snackbar.make(rootLayout,"No se puede cargar los datos",Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<WsResultado> call, Throwable t) {
+                        Snackbar.make(rootLayout,"Sin acceso a Internet",Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        dialog.setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                dialogInterface.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     private void showAlertForCreateCustomer() {
@@ -171,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                         Snackbar.make(rootLayout,"Fallo al guardar",Snackbar.LENGTH_SHORT).show();
                     }
                     if(result.getWasSuccessful() == 1 ){
-                        //Esto es para agregar un item dentro del RecyclerView
+//   ----------------------------------Esto es para agregar un item dentro del RecyclerView----------------------------------------
                         lista_customers.add(customer);
 
                         //Esto es para ordernar la lista_customer  alfabeticamente por el ID
@@ -191,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                         recyclerAdapter.notifyDataSetChanged();
                         //Esto es para que scroolle hasta la position correcta
                         customerRecycler.smoothScrollToPosition(position);
-
+//---------------------------------------------------------------------------------------------------------------------------------
                         Toast.makeText(getApplicationContext(),"Se guardo exitosamente",Toast.LENGTH_SHORT).show();
                     }
 

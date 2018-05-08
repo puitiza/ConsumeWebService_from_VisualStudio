@@ -1,4 +1,4 @@
-package com.example.apuitiza.consumewebservice_from_visualstudio;
+package com.example.apuitiza.consumewebservice_from_visualstudio.Util;
 
 import android.view.View;
 
