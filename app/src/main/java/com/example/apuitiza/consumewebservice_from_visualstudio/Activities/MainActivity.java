@@ -8,8 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.SimpleAdapter;
@@ -74,20 +77,22 @@ public class MainActivity extends AppCompatActivity {
                         public void onItemClick(View view, int position) {
                             Toast.makeText(MainActivity.this, getResources().getString(R.string.clicked_item, albumList.get(position).getAlbumName()), Toast.LENGTH_SHORT).show();
                         }*/
-
                         @Override
                         public void onItemLongClick(View view, int position) {
                             String options[] = new String[] {"Editar Cliente", "Eliminar Cliente"};
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setTitle("Select your option:");
+                            builder.setTitle("Select your option: "+lista_customers.get(position).getCustomerID());
                             builder.setItems(options, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int item) {
-                                    if(item == 0){
-                                        Toast.makeText(getApplicationContext(),"Editar Cliente",Toast.LENGTH_SHORT).show();
-                                    }if(item == 1){
-                                        Toast.makeText(getApplicationContext(),"Eliminar Cliente",Toast.LENGTH_SHORT).show();
+                                    switch (item){
+                                        case 0 :
+                                           // showAlertForEditCustomer(lista_customers.get(info.position));
+                                            Toast.makeText(getApplicationContext(),"Editar Cliente",Toast.LENGTH_SHORT).show();
+                                        case 1 :
+                                            //showAlertForDeleteCustomer(lista_customers.get(info.position));
+                                            Toast.makeText(getApplicationContext(),"Eliminar Cliente",Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
