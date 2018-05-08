@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Activities.OrdersActivity;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Customers;
 import com.example.apuitiza.consumewebservice_from_visualstudio.R;
+import com.example.apuitiza.consumewebservice_from_visualstudio.RecyclerViewItemClickListener;
 
 import java.util.List;
 
@@ -22,6 +23,12 @@ public class CustomerRecycleradapter extends RecyclerView.Adapter<CustomerRecycl
 
     private List<Customers> lstCustomer;
     private Context mContext;
+    private RecyclerViewItemClickListener recyclerViewItemClickListener;
+
+    //Set method of OnItemClickListener object
+    public void setOnItemClickListener(RecyclerViewItemClickListener recyclerViewItemClickListener){
+        this.recyclerViewItemClickListener=recyclerViewItemClickListener;
+    }
 
     public CustomerRecycleradapter(List<Customers> lstCustomer, Context context) {
         this.lstCustomer = lstCustomer;
@@ -38,6 +45,7 @@ public class CustomerRecycleradapter extends RecyclerView.Adapter<CustomerRecycl
     @Override
     public void onBindViewHolder(CustomersViewHolder holder, int position) {
         final Customers cliente = lstCustomer.get(position);
+        holder.position=position;
         holder.city.setText(cliente.getCity());
         holder.companyName.setText(cliente.getCompanyName());
         holder.idCustomer.setText(cliente.getCustomerID());
@@ -61,10 +69,27 @@ public class CustomerRecycleradapter extends RecyclerView.Adapter<CustomerRecycl
     class CustomersViewHolder extends RecyclerView.ViewHolder {
         private TextView city, companyName, idCustomer;
         CardView layout_item_client;
+        public int position=0;
 
-        public CustomersViewHolder(View itemView) {
-            super(itemView);
-
+        public CustomersViewHolder(View v) {
+            super(v);
+           /* v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //When item view is clicked, trigger the itemclicklistener
+                    //Because that itemclicklistener is indicated in MainActivity
+                    recyclerViewItemClickListener.onItemClick(v,position);
+                }
+            });*/
+            v.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //When item view is clicked long, trigger the itemclicklistener
+                    //Because that itemclicklistener is indicated in MainActivity
+                    recyclerViewItemClickListener.onItemLongClick(v,position);
+                    return true;
+                }
+            });
             city =  itemView.findViewById(R.id.city);
             companyName = itemView.findViewById(R.id.companyName);
             idCustomer =  itemView.findViewById(R.id.idCustomer);

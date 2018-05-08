@@ -19,6 +19,7 @@ import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Customers
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Order;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.WsResultado;
 import com.example.apuitiza.consumewebservice_from_visualstudio.R;
+import com.example.apuitiza.consumewebservice_from_visualstudio.RecyclerViewItemClickListener;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Services.ApiUtils;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Services.ResultadoService;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -63,6 +64,21 @@ public class MainActivity extends AppCompatActivity {
                     customerRecycler.setLayoutManager(linearLayoutManager);
 
                     recyclerAdapter = new CustomerRecycleradapter(lista_customers,MainActivity.this);
+
+                    //Create custom interface object and send it to adapter
+                    //Adapter trigger it when any item view is clicked
+                    recyclerAdapter.setOnItemClickListener(new RecyclerViewItemClickListener() {
+                       /* @Override
+                        public void onItemClick(View view, int position) {
+                            Toast.makeText(MainActivity.this, getResources().getString(R.string.clicked_item, albumList.get(position).getAlbumName()), Toast.LENGTH_SHORT).show();
+                        }*/
+
+                        @Override
+                        public void onItemLongClick(View view, int position) {
+                            Toast.makeText(MainActivity.this,"muestra un alert Dialog", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                     customerRecycler.setAdapter(recyclerAdapter);
 
                     rootLayout = findViewById(R.id.activity_main);
