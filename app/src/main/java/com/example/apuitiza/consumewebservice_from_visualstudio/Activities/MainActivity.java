@@ -10,7 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.apuitiza.consumewebservice_from_visualstudio.Adapter.CustomerRecycleradapter;
@@ -25,9 +27,11 @@ import com.example.apuitiza.consumewebservice_from_visualstudio.Services.Resulta
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,8 +69,6 @@ public class MainActivity extends AppCompatActivity {
 
                     recyclerAdapter = new CustomerRecycleradapter(lista_customers,MainActivity.this);
 
-                    //Create custom interface object and send it to adapter
-                    //Adapter trigger it when any item view is clicked
                     recyclerAdapter.setOnItemClickListener(new RecyclerViewItemClickListener() {
                        /* @Override
                         public void onItemClick(View view, int position) {
@@ -75,7 +77,21 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onItemLongClick(View view, int position) {
-                            Toast.makeText(MainActivity.this,"muestra un alert Dialog", Toast.LENGTH_SHORT).show();
+                            String options[] = new String[] {"Editar Cliente", "Eliminar Cliente"};
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setTitle("Select your option:");
+                            builder.setItems(options, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int item) {
+                                    if(item == 0){
+                                        Toast.makeText(getApplicationContext(),"Editar Cliente",Toast.LENGTH_SHORT).show();
+                                    }if(item == 1){
+                                        Toast.makeText(getApplicationContext(),"Eliminar Cliente",Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                            builder.show();
                         }
                     });
 
