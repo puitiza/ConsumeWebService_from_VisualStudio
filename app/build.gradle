@@ -33,6 +33,8 @@ dependencies {
     //Estas librerias con para el consumo de listView
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
+    implementation 'com.android.support:design:27.+'
+
 
     //Esta libreria es para mostrar un dialog con mejor diseño
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
