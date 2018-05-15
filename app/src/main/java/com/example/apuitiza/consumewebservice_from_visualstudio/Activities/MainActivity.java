@@ -8,13 +8,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.apuitiza.consumewebservice_from_visualstudio.Adapter.CustomerRecycleradapter;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Customers;
+import com.example.apuitiza.consumewebservice_from_visualstudio.Models.Resultado;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Models.WsResultado;
 import com.example.apuitiza.consumewebservice_from_visualstudio.R;
 import com.example.apuitiza.consumewebservice_from_visualstudio.Util.RecyclerViewItemClickListener;
@@ -50,6 +54,42 @@ public class MainActivity extends AppCompatActivity {
         fab = findViewById(R.id.fabAddCustomer);
         customerRecycler = findViewById(R.id.recycle);
         mResultadoService = ApiUtils.getAPIService();
+/*---------------------------------------Web Services with Basic Authentication----------------------------------------------------*/
+        final MaterialEditText userBA = findViewById(R.id.edtUser_BAuthentication);
+        final MaterialEditText passBA = findViewById(R.id.edtPass_BAuthentication);
+        final MaterialEditText datoBA = findViewById(R.id.edtDato);
+        final TextView getData = findViewById(R.id.getData);
+        Button btnGuardar;
+        btnGuardar = findViewById(R.id.addBasicAuth);
+        btnGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String st_userBA = userBA.getText().toString().trim();
+                String st_passBA = passBA.getText().toString().trim();
+                String st_datoBA = datoBA.getText().toString().trim();
+                String base = st_userBA + ":"+st_passBA;
+
+                String AuthHeader = "Basic "+ Base64.encodeToString(base.getBytes(),Base64.NO_WRAP);
+
+                Call<Resultado> resultadoData = mResultadoService.getResultadoBasicAuthentication(AuthHeader,st_datoBA);
+                resultadoData.enqueue(new Callback<Resultado>() {
+                    @Override
+                    public void onResponse(Call<Resultado> call, Response<Resultado> response) {
+                        if(response.body()!= null){
+                            Toast.makeText(getApplicationContext(),"ya dio",Toast.LENGTH_SHORT).show();
+                            getData.setText(response.body().getGetDataResult());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Resultado> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
+        /*---------------------------------------Web Services with Basic Authentication----------------------------------------------------*/
+
         Call<List<Customers>> customersData = mResultadoService.getListCustomer();
         customersData.enqueue(new Callback<List<Customers>>() {
             @Override
